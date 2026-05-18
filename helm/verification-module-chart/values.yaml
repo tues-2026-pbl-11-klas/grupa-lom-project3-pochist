@@ -1,0 +1,76 @@
+replicaCount: 1
+
+image:
+  repository: acrchistdev.azurecr.io/chist-verification
+  pullPolicy: Always
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "verification-module"
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8083
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: "4.165.174.62.nip.io"
+      paths:
+        - path: /api/verifications
+          pathType: Prefix
+  tls: []
+
+resources:
+  requests:
+    cpu: 75m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+livenessProbe:
+  httpGet:
+    path: /actuator/health
+    port: 8083
+  initialDelaySeconds: 120
+  periodSeconds: 15
+  failureThreshold: 5
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health
+    port: 8083
+  initialDelaySeconds: 120
+  periodSeconds: 15
+  failureThreshold: 5
+
+autoscaling:
+  enabled: false
+
+volumes: []
+volumeMounts: []
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+envFrom:
+  - secretRef:
+      name: backend-secret
+
+httpRoute:
+  enabled: false

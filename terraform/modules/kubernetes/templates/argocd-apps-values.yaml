@@ -1,0 +1,23 @@
+applications:
+  chist-apps:
+    name: chist-apps
+    namespace: argocd
+    project: default
+    source:
+      repoURL: https://github.com/TUES-2026-PBL-11-klas/Grupa-Lom-Project2-Chist
+      targetRevision: main
+      path: argocd
+    destination:
+      server: https://kubernetes.default.svc
+      namespace: argocd
+    syncPolicy:
+      automated:
+        prune: true
+        selfHeal: true
+      syncOptions:
+        - CreateNamespace=true
+
+projects: {}
+applicationsets: {}
+itemTemplates: []
+extensions: {}

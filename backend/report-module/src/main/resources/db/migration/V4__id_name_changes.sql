@@ -1,0 +1,2 @@
+-- V2 already uses report_id and task_id; these renames are no longer needed.
+-- Kept as empty migration to preserve Flyway version history.

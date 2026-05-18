@@ -1,0 +1,224 @@
+name: CD - Deploy to ACR
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  detect-changes:
+    name: Detect Changed Services
+    runs-on: ubuntu-latest
+    outputs:
+      user: ${{ steps.changes.outputs.user }}
+      report: ${{ steps.changes.outputs.report }}
+      notification: ${{ steps.changes.outputs.notification }}
+      verification: ${{ steps.changes.outputs.verification }}
+      frontend: ${{ steps.changes.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            user:
+              - 'backend/user-module/**'
+            report:
+              - 'backend/report-module/**'
+            notification:
+              - 'backend/notification-module/**'
+            verification:
+              - 'backend/verification-module/**'
+            frontend:
+              - 'frontend/**'
+
+  build-user:
+    name: Build & Push user-module
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.user == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          namespace: admin
+          secrets: |
+            secret/data/acr registry | ACR_REGISTRY ;
+            secret/data/acr username | ACR_USERNAME ;
+            secret/data/acr password | ACR_PASSWORD
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ACR_REGISTRY }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
+      - id: tags
+        run: echo "sha_tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./backend/user-module
+          file: ./backend/user-module/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ACR_REGISTRY }}/chist-user:latest
+            ${{ env.ACR_REGISTRY }}/chist-user:${{ steps.tags.outputs.sha_tag }}
+          cache-from: type=gha,scope=user
+          cache-to: type=gha,mode=max,scope=user
+
+  build-report:
+    name: Build & Push report-module
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.report == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          namespace: admin
+          secrets: |
+            secret/data/acr registry | ACR_REGISTRY ;
+            secret/data/acr username | ACR_USERNAME ;
+            secret/data/acr password | ACR_PASSWORD
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ACR_REGISTRY }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
+      - id: tags
+        run: echo "sha_tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./backend/report-module
+          file: ./backend/report-module/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ACR_REGISTRY }}/chist-report:latest
+            ${{ env.ACR_REGISTRY }}/chist-report:${{ steps.tags.outputs.sha_tag }}
+          cache-from: type=gha,scope=report
+          cache-to: type=gha,mode=max,scope=report
+
+  build-notification:
+    name: Build & Push notification-module
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.notification == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          namespace: admin
+          secrets: |
+            secret/data/acr registry | ACR_REGISTRY ;
+            secret/data/acr username | ACR_USERNAME ;
+            secret/data/acr password | ACR_PASSWORD
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ACR_REGISTRY }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
+      - id: tags
+        run: echo "sha_tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./backend/notification-module
+          file: ./backend/notification-module/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ACR_REGISTRY }}/chist-notification:latest
+            ${{ env.ACR_REGISTRY }}/chist-notification:${{ steps.tags.outputs.sha_tag }}
+          cache-from: type=gha,scope=notification
+          cache-to: type=gha,mode=max,scope=notification
+
+  build-verification:
+    name: Build & Push verification-module
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.verification == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          namespace: admin
+          secrets: |
+            secret/data/acr registry | ACR_REGISTRY ;
+            secret/data/acr username | ACR_USERNAME ;
+            secret/data/acr password | ACR_PASSWORD
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ACR_REGISTRY }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
+      - id: tags
+        run: echo "sha_tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./backend/verification-module
+          file: ./backend/verification-module/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ACR_REGISTRY }}/chist-verification:latest
+            ${{ env.ACR_REGISTRY }}/chist-verification:${{ steps.tags.outputs.sha_tag }}
+          cache-from: type=gha,scope=verification
+          cache-to: type=gha,mode=max,scope=verification
+
+  build-frontend:
+    name: Build & Push frontend
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frontend == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          namespace: admin
+          secrets: |
+            secret/data/acr registry | ACR_REGISTRY ;
+            secret/data/acr username | ACR_USERNAME ;
+            secret/data/acr password | ACR_PASSWORD
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ACR_REGISTRY }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
+      - id: tags
+        run: echo "sha_tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ACR_REGISTRY }}/chist-frontend:latest
+            ${{ env.ACR_REGISTRY }}/chist-frontend:${{ steps.tags.outputs.sha_tag }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
