@@ -48,6 +48,63 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+@theme {
+  /* Pink / magenta accents */
+  --color-pink-primary: #FF4D94;
+  --color-magenta: #C026D3;
+  --color-pink-light: #F472B6;
+  --color-pink-glow: rgba(255, 77, 148, 0.3);
+  --color-accent-pink: #FF4D94;
+  --color-accent-pink-dim: rgba(255, 77, 148, 0.12);
+  --color-accent-pink-border: rgba(255, 77, 148, 0.35);
+  --color-accent-pink-glow: rgba(255, 77, 148, 0.4);
+
+  /* Neutrals */
+  --color-brand-primary: #ffffff;
+  --color-brand-primary-dim: rgba(255, 255, 255, 0.07);
+  --color-brand-primary-border: rgba(255, 255, 255, 0.18);
+  --color-brand-primary-glow: rgba(255, 255, 255, 0.15);
+  --color-brand-secondary: #cccccc;
+  --color-brand-secondary-dim: rgba(255, 255, 255, 0.06);
+  --color-brand-accent: #999999;
+  --color-brand-accent-dim: rgba(255, 255, 255, 0.05);
+
+  /* Status */
+  --color-status-red: #ff4444;
+  --color-status-red-dim: rgba(255, 68, 68, 0.1);
+  --color-status-green-ok: #aaaaaa;
+  --color-status-green-dim: rgba(255, 255, 255, 0.06);
+  --color-status-orange: #cccccc;
+
+  /* Backgrounds */
+  --color-bg-base: #000000;
+  --color-bg-surface: #0f0f0f;
+  --color-bg-card: rgba(255, 255, 255, 0.04);
+  --color-bg-card-hover: rgba(255, 255, 255, 0.07);
+  --color-bg-input: rgba(255, 255, 255, 0.05);
+  --color-bg-glass: rgba(255, 255, 255, 0.03);
+
+  /* Text */
+  --color-text-1: #ffffff;
+  --color-text-2: rgba(255, 255, 255, 0.55);
+  --color-text-3: rgba(255, 255, 255, 0.3);
+
+  /* Borders (prefixed to avoid clashing with shadcn --color-border) */
+  --color-brand-border: rgba(255, 255, 255, 0.08);
+  --color-brand-border-md: rgba(255, 255, 255, 0.15);
+
+  /* Fonts (next/font wiring happens in Task 5; these are placeholder values used until then) */
+  --font-display: "Bebas Neue", sans-serif;
+  --font-mono-brand: "Space Mono", monospace;
+  --font-body: "DM Sans", sans-serif;
+
+  /* Brand radii (suffixed to avoid clashing with shadcn --radius-* tokens already defined) */
+  --radius-brand-sm: 8px;
+  --radius-brand-md: 12px;
+  --radius-brand-lg: 16px;
+  --radius-brand-xl: 22px;
+}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -127,4 +184,10 @@
   html {
     @apply font-sans;
   }
+}
+
+body {
+  background: var(--color-bg-base);
+  color: var(--color-text-1);
+  font-family: var(--font-body);
 }
