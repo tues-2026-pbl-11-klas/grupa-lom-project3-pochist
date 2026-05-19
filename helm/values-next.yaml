@@ -1,0 +1,66 @@
+# Staging overlay for the Next.js rewrite (Phase 1 — scaffold only).
+# Activate with:
+#   helm upgrade ... helm/frontend-chart/ -f helm/frontend-chart/values.yaml -f helm/values-next.yaml
+#
+# Template integration is Phase 7; this file declares the runtime differences
+# (image, port, health probe path) so Phase 7's PR has a clear diff to apply.
+#
+# STRUCTURE NOTE: The existing frontend-chart uses flat top-level keys
+# (image.repository, service.port, livenessProbe, etc.) — there is no
+# "frontend:" wrapper. Keys here match that convention exactly.
+#
+# PHASE 7 TEMPLATE CHANGES NEEDED:
+#   1. deployment.yaml containerPort is currently hardcoded to .Values.service.port
+#      (port 80). Phase 7 must introduce a separate .Values.containerPort key so
+#      the container listens on 3000 while the Service still exposes 80.
+#   2. service.yaml targetPort is hardcoded to 80. Phase 7 must change it to
+#      .Values.containerPort (or .Values.service.targetPort) so traffic routes
+#      correctly to port 3000.
+#   3. deployment.yaml has no env: section; the existing values.yaml carries an
+#      "env:" key but it is never rendered. Phase 7 must add env rendering.
+#   4. The env vars below (NODE_ENV, NEXT_TELEMETRY_DISABLED) will be wired up
+#      once item 3 is addressed.
+
+image:
+  repository: chist-frontend-next
+  tag: phase1
+  pullPolicy: IfNotPresent
+
+# containerPort: 3000
+# Phase 7 must add .Values.containerPort to the deployment template before
+# this key has any effect. Left commented so lint passes against the current
+# templates (unused values are warnings, not errors, but this makes intent clear).
+
+service:
+  type: ClusterIP
+  port: 80
+  # targetPort: 3000 — Phase 7 must parameterise targetPort in service.yaml.
+
+env:
+  NODE_ENV: production
+  NEXT_TELEMETRY_DISABLED: "1"
+  # BACKEND_URL is set in Phase 2; not needed for the scaffold.
+
+livenessProbe:
+  httpGet:
+    path: /api/health
+    # port 3000 requires Phase 7 containerPort fix; using 80 is a temporary
+    # placeholder that matches what the current template wires up.
+    port: 3000
+  initialDelaySeconds: 10
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
