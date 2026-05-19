@@ -1,25 +1,32 @@
 replicaCount: 1
+
 image:
   repository: acrchistdev.azurecr.io/chist-frontend
   pullPolicy: Always
   tag: "latest"
+
 env:
   VITE_API_URL: "http://user-module:8080"
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
 serviceAccount:
   create: true
   automount: true
   annotations: {}
   name: ""
+
 podAnnotations: {}
 podLabels: {}
 podSecurityContext: {}
 securityContext: {}
+
 service:
   type: ClusterIP
   port: 80
+
 ingress:
   enabled: true
   className: nginx
@@ -32,6 +39,7 @@ ingress:
           pathType: Prefix
           servicePort: 80
   tls: []
+
 resources:
   requests:
     cpu: 50m
@@ -39,17 +47,34 @@ resources:
   limits:
     cpu: 200m
     memory: 256Mi
-livenessProbe: {}
-readinessProbe: {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: 80
+  initialDelaySeconds: 10
+  periodSeconds: 15
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: 80
+  initialDelaySeconds: 10
+  periodSeconds: 15
+  failureThreshold: 3
+
 autoscaling:
   enabled: false
   minReplicas: 1
   maxReplicas: 3
   targetCPUUtilizationPercentage: 80
+
 volumes: []
 volumeMounts: []
 nodeSelector: {}
 tolerations: []
 affinity: {}
+
 httpRoute:
   enabled: false
