@@ -1,5 +1,6 @@
 import { createContext, useContext, useReducer, useCallback, useRef, useEffect } from "react";
 import { usersApi, reportsApi } from "../services/api.ts";
+import { MOCK_ME, MOCK_REPORTS } from "../data/mockData.ts";
 
 interface Report {
   id: string;
@@ -309,6 +310,12 @@ export function AppProvider({ children, onLogout }: { children: React.ReactNode;
   useEffect(() => {
     let cancelled = false;
     async function load() {
+      if (localStorage.getItem("cw_token") === "mock-dev-token") {
+        dispatch({ type: "SET_USER", payload: mapApiUser(MOCK_ME) });
+        dispatch({ type: "SET_REPORTS", payload: MOCK_REPORTS.map(mapApiReport) });
+        dispatch({ type: "SET_LOADING", payload: false });
+        return;
+      }
       try {
         const [userData, reportsData] = await Promise.all([
           usersApi.getMe(),

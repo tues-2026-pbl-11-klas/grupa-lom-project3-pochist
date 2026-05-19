@@ -3,6 +3,7 @@ import { Crown, Flame, Paintbrush, Trophy, Check } from "lucide-react";
 import DataIcon from "../components/DataIcon.tsx";
 import "../styles/LeaderboardView.css";
 import { BADGES } from "../data/constants.ts";
+import { MOCK_USERS } from "../data/mockData.ts";
 import { useApp } from "../context/AppContext.tsx";
 import { usersApi } from "../services/api.ts";
 import { t, translateLevel } from "../i18n.ts";
@@ -67,6 +68,7 @@ function mapLeaderboardUser(data: any): UserEntry {
 }
 
 function Podium({ top3 }: { top3: UserEntry[] }) {
+  if (top3.length === 0) return null;
   const order = [top3[1], top3[0], top3[2]];
   const heights = [90, 124, 76];
   const sizes = [18, 24, 16];
@@ -74,7 +76,7 @@ function Podium({ top3 }: { top3: UserEntry[] }) {
 
   return (
     <div className="leaderboard__podium">
-      {order.map((user, i) => (
+      {order.map((user, i) => user && (
         <div key={user.id} className="leaderboard__podium-item">
           {positions[i] === 1 && (
             <div className="leaderboard__podium-crown anim-float"><Crown size={20} strokeWidth={1.8} /></div>
@@ -188,6 +190,10 @@ export default function LeaderboardView({ lang }: LeaderboardViewProps) {
   const [leaderboardData, setLeaderboardData] = useState<UserEntry[]>([]);
 
   useEffect(() => {
+    if (localStorage.getItem("cw_token") === "mock-dev-token") {
+      setLeaderboardData(MOCK_USERS.map(mapLeaderboardUser));
+      return;
+    }
     usersApi.getLeaderboard()
       .then((data: any[]) => setLeaderboardData(data.map(mapLeaderboardUser)))
       .catch(() => setLeaderboardData([]));
