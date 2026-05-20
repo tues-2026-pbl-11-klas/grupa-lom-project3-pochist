@@ -2,5 +2,25 @@
   "Home": {
     "title": "CHIST",
     "subtitle": "Sofia · Cleaner City"
+  },
+  "Auth": {
+    "tabs": { "login": "ВХОД", "register": "РЕГИСТРАЦИЯ" },
+    "email": "Имейл",
+    "emailPlaceholder": "you@example.com",
+    "password": "Парола",
+    "passwordPlaceholder": "••••••••",
+    "username": "Потребителско име",
+    "usernamePlaceholder": "GreenWarrior99",
+    "confirmPassword": "Потвърди парола",
+    "minPasswordHint": "минимум 8 символа",
+    "submitLogin": "ВХОД",
+    "submitRegister": "СЪЗДАЙ АКАУНТ",
+    "submitting": "Изпращане...",
+    "errorRequired": "Попълнете всички полета.",
+    "errorMismatch": "Паролите не съвпадат.",
+    "errorMinLength": "Паролата трябва да е минимум 8 символа.",
+    "errorGeneric": "Възникна грешка. Опитайте отново.",
+    "switchToRegister": "Нямате акаунт? РЕГИСТРАЦИЯ →",
+    "switchToLogin": "← ВЕЧЕ ИМАМ АКАУНТ"
   }
 }

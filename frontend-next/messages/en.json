@@ -2,5 +2,25 @@
   "Home": {
     "title": "CHIST",
     "subtitle": "Sofia · Cleaner City"
+  },
+  "Auth": {
+    "tabs": { "login": "LOG IN", "register": "REGISTER" },
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "••••••••",
+    "username": "Username",
+    "usernamePlaceholder": "GreenWarrior99",
+    "confirmPassword": "Confirm password",
+    "minPasswordHint": "min. 8 characters",
+    "submitLogin": "LOG IN",
+    "submitRegister": "CREATE ACCOUNT",
+    "submitting": "Submitting...",
+    "errorRequired": "Fill in all fields.",
+    "errorMismatch": "Passwords don't match.",
+    "errorMinLength": "Password must be at least 8 characters.",
+    "errorGeneric": "Something went wrong. Try again.",
+    "switchToRegister": "Don't have an account? REGISTER →",
+    "switchToLogin": "← ALREADY HAVE AN ACCOUNT"
   }
 }
