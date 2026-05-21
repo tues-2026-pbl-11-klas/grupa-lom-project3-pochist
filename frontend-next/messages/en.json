@@ -22,5 +22,13 @@
     "errorGeneric": "Something went wrong. Try again.",
     "switchToRegister": "Don't have an account? REGISTER →",
     "switchToLogin": "← ALREADY HAVE AN ACCOUNT"
+  },
+  "Nav": {
+    "reports": "REPORTS",
+    "leaderboard": "LEADERBOARD",
+    "profile": "PROFILE",
+    "rewards": "REWARDS",
+    "newReport": "NEW REPORT",
+    "logout": "LOG OUT"
   }
 }

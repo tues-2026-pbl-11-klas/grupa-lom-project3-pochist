@@ -22,5 +22,13 @@
     "errorGeneric": "Възникна грешка. Опитайте отново.",
     "switchToRegister": "Нямате акаунт? РЕГИСТРАЦИЯ →",
     "switchToLogin": "← ВЕЧЕ ИМАМ АКАУНТ"
+  },
+  "Nav": {
+    "reports": "СИГНАЛИ",
+    "leaderboard": "КЛАСАЦИЯ",
+    "profile": "ПРОФИЛ",
+    "rewards": "НАГРАДИ",
+    "newReport": "НОВ СИГНАЛ",
+    "logout": "ИЗХОД"
   }
 }
