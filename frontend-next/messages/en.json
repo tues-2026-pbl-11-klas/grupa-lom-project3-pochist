@@ -30,5 +30,10 @@
     "rewards": "REWARDS",
     "newReport": "NEW REPORT",
     "logout": "LOG OUT"
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "bg": "Bulgarian",
+    "en": "English"
   }
 }

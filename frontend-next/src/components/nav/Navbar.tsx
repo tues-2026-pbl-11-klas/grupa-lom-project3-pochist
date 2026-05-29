@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Leaf, Plus, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/lib/actions/auth";
+import { LocaleSwitcher } from "./LocaleSwitcher";
 
 export function Navbar() {
   const t = useTranslations("Nav");
@@ -62,6 +63,7 @@ export function Navbar() {
             <Plus size={14} strokeWidth={2} />
             {t("newReport")}
           </Link>
+          <LocaleSwitcher />
           <form action={logoutAction}>
             <Button type="submit" size="sm" variant="ghost" className="gap-1.5">
               <LogOut size={14} />
