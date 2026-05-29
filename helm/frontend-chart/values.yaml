@@ -1,10 +1,15 @@
 replicaCount: 1
 image:
-  repository: acrchistdev.azurecr.io/chist-frontend
+  repository: acrchistdev.azurecr.io/chist-frontend-next
   pullPolicy: Always
   tag: "latest"
+containerPort: 3000
 env:
-  VITE_API_URL: "http://user-module:8080"
+  NODE_ENV: "production"
+  NEXT_TELEMETRY_DISABLED: "1"
+  BACKEND_URL: "http://user-module:8080"
+  AUTH_COOKIE_SECURE: "true"
+  NEXT_PUBLIC_DEFAULT_LOCALE: "bg"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -20,6 +25,7 @@ securityContext: {}
 service:
   type: ClusterIP
   port: 80
+  targetPort: 3000
 ingress:
   enabled: true
   className: nginx
@@ -34,13 +40,23 @@ ingress:
   tls: []
 resources:
   requests:
-    cpu: 50m
-    memory: 128Mi
-  limits:
-    cpu: 200m
+    cpu: 100m
     memory: 256Mi
-livenessProbe: {}
-readinessProbe: {}
+  limits:
+    cpu: 500m
+    memory: 512Mi
+livenessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 10
+  periodSeconds: 10
+readinessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 5
+  periodSeconds: 5
 autoscaling:
   enabled: false
   minReplicas: 1
