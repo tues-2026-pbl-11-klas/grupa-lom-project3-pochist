@@ -1,14 +1,16 @@
 "use client";
 
 import { Star, Paintbrush, MapPin, Flame } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { User } from "@/lib/api/mappers";
 
 export function StatBars({ user }: { user: User }) {
+  const t = useTranslations("Profile.stats");
   const items = [
-    { icon: Star,       key: "ОБЩО ТОЧКИ",        val: user.points.toLocaleString(),                 pct: user.points / 5000 },
-    { icon: Paintbrush, key: "ПОЧИСТВАНИЯ",       val: user.cleanings.toString(),                    pct: user.cleanings / 50 },
-    { icon: MapPin,     key: "СИГНАЛИ",           val: user.reports.toString(),                      pct: user.reports / 30 },
-    { icon: Flame,      key: "РЕКОРД НА СТРИЙК",  val: `${user.streak} дни`,                         pct: user.streak / 30 },
+    { icon: Star,       key: t("totalPoints"),  val: user.points.toLocaleString(),               pct: user.points / 5000 },
+    { icon: Paintbrush, key: t("cleanings"),    val: user.cleanings.toString(),                  pct: user.cleanings / 50 },
+    { icon: MapPin,     key: t("reports"),      val: user.reports.toString(),                    pct: user.reports / 30 },
+    { icon: Flame,      key: t("streakRecord"), val: t("streakDays", { n: user.streak }),        pct: user.streak / 30 },
   ];
   return (
     <div className="flex flex-col gap-3 animate-fade-up">

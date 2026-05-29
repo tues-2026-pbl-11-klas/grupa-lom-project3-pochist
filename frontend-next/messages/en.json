@@ -67,6 +67,37 @@
     "master": "MASTER",
     "legend": "LEGEND"
   },
+  "Profile": {
+    "verified": "VERIFIED",
+    "xpToNext": "To next level",
+    "tabs": {
+      "stats": "STATS",
+      "badges": "BADGES",
+      "activity": "ACTIVITY",
+      "settings": "SETTINGS"
+    },
+    "stats": {
+      "points": "POINTS",
+      "cleanings": "CLEANINGS",
+      "reports": "REPORTS",
+      "totalPoints": "TOTAL POINTS",
+      "streakRecord": "STREAK RECORD",
+      "streakDays": "{n} days"
+    },
+    "activity": {
+      "last4weeks": "Last 4 weeks",
+      "days": { "mon": "M", "tue": "T", "wed": "W", "thu": "T", "fri": "F", "sat": "S", "sun": "S" }
+    },
+    "settings": {
+      "pushNotifs": "Push notifications",
+      "pushNotifsDesc": "Browser alerts on new reports",
+      "gps": "GPS",
+      "gpsDesc": "Location when filing a report",
+      "emails": "Email",
+      "emailsDesc": "Weekly digest",
+      "logout": "LOG OUT"
+    }
+  },
   "Leaderboard": {
     "title": "LEADERBOARD",
     "yourPosition": "YOUR POSITION",

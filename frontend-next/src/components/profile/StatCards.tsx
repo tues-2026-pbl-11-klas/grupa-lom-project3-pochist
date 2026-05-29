@@ -1,13 +1,15 @@
 "use client";
 
 import { Star, Paintbrush, MapPin } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { User } from "@/lib/api/mappers";
 
 export function StatCards({ user }: { user: User }) {
+  const t = useTranslations("Profile.stats");
   const items = [
-    { icon: Star, val: user.points.toLocaleString(), label: "ТОЧКИ" },
-    { icon: Paintbrush, val: user.cleanings, label: "ПОЧИСТВАНИЯ" },
-    { icon: MapPin, val: user.reports, label: "СИГНАЛИ" },
+    { icon: Star,       val: user.points.toLocaleString(), label: t("points") },
+    { icon: Paintbrush, val: user.cleanings,               label: t("cleanings") },
+    { icon: MapPin,     val: user.reports,                 label: t("reports") },
   ];
   return (
     <div className="grid grid-cols-3 gap-3">

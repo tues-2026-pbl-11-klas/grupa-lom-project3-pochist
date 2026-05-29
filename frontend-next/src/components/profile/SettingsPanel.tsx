@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/lib/actions/auth";
 
@@ -40,6 +41,7 @@ function useStoredFlag(key: string, defaultOn: boolean) {
 }
 
 export function SettingsPanel() {
+  const t = useTranslations("Profile.settings");
   const params = useParams<{ locale: string }>();
   const locale = params?.locale ?? "bg";
   const [notifs, toggleNotifs] = useStoredFlag("cw_notifs", true);
@@ -50,11 +52,11 @@ export function SettingsPanel() {
 
   return (
     <div className="rounded-xl border border-brand-border bg-bg-card p-4 animate-fade-up">
-      <Toggle label="Push уведомления" desc="Известия в браузъра при нови сигнали" value={notifs} onToggle={toggleNotifs} />
-      <Toggle label="GPS" desc="Локация при подаване на сигнал" value={gps} onToggle={toggleGps} />
-      <Toggle label="Имейли" desc="Седмично резюме" value={emails} onToggle={toggleEmails} />
+      <Toggle label={t("pushNotifs")} desc={t("pushNotifsDesc")} value={notifs} onToggle={toggleNotifs} />
+      <Toggle label={t("gps")}        desc={t("gpsDesc")}        value={gps}    onToggle={toggleGps} />
+      <Toggle label={t("emails")}     desc={t("emailsDesc")}     value={emails} onToggle={toggleEmails} />
       <form action={logoutAction} className="mt-4">
-        <Button type="submit" variant="destructive" className="w-full">ИЗХОД</Button>
+        <Button type="submit" variant="destructive" className="w-full">{t("logout")}</Button>
       </form>
     </div>
   );

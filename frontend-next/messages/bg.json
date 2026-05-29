@@ -67,6 +67,37 @@
     "master": "МАСТЪР",
     "legend": "ЛЕГЕНДА"
   },
+  "Profile": {
+    "verified": "VERIFIED",
+    "xpToNext": "Към следващо ниво",
+    "tabs": {
+      "stats": "СТАТИСТИКИ",
+      "badges": "БЕЙДЖОВЕ",
+      "activity": "АКТИВНОСТ",
+      "settings": "НАСТРОЙКИ"
+    },
+    "stats": {
+      "points": "ТОЧКИ",
+      "cleanings": "ПОЧИСТВАНИЯ",
+      "reports": "СИГНАЛИ",
+      "totalPoints": "ОБЩО ТОЧКИ",
+      "streakRecord": "РЕКОРД НА СТРИЙК",
+      "streakDays": "{n} дни"
+    },
+    "activity": {
+      "last4weeks": "Последни 4 седмици",
+      "days": { "mon": "П", "tue": "В", "wed": "С", "thu": "Ч", "fri": "П", "sat": "С", "sun": "Н" }
+    },
+    "settings": {
+      "pushNotifs": "Push уведомления",
+      "pushNotifsDesc": "Известия в браузъра при нови сигнали",
+      "gps": "GPS",
+      "gpsDesc": "Локация при подаване на сигнал",
+      "emails": "Имейли",
+      "emailsDesc": "Седмично резюме",
+      "logout": "ИЗХОД"
+    }
+  },
   "Leaderboard": {
     "title": "КЛАСАЦИЯ",
     "yourPosition": "ТВОЯТА ПОЗИЦИЯ",
