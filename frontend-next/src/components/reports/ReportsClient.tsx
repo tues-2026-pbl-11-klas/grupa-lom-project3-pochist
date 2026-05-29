@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import { useApp } from "@/context/AppContext";
 import { ReportCard } from "./ReportCard";
 import type { Report } from "@/lib/api/mappers";
@@ -20,6 +21,7 @@ interface ReportsClientProps {
 }
 
 export function ReportsClient({ initialReports, locale }: ReportsClientProps) {
+  const t = useTranslations("Reports");
   const { selectedReportId, selectReport, filters } = useApp();
 
   const filtered = initialReports.filter((r) => {
@@ -32,7 +34,7 @@ export function ReportsClient({ initialReports, locale }: ReportsClientProps) {
     <div className="flex flex-col md:flex-row gap-4 h-[calc(100vh-3.5rem)] p-4">
       <aside className="w-full md:w-[360px] flex flex-col gap-2 overflow-y-auto">
         <div className="text-text-3 text-xs uppercase tracking-wider px-1">
-          {filtered.length} signals
+          {t("signalsCount", { n: filtered.length })}
         </div>
         {filtered.map((r) => (
           <ReportCard
@@ -44,7 +46,7 @@ export function ReportsClient({ initialReports, locale }: ReportsClientProps) {
         ))}
         {filtered.length === 0 && (
           <div className="text-text-3 text-sm text-center py-8">
-            No reports match the current filters.
+            {t("noMatch")}
           </div>
         )}
       </aside>

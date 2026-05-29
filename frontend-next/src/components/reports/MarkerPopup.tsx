@@ -2,6 +2,7 @@
 
 import type { Report } from "@/lib/api/mappers";
 import { MapPin, Flame, User } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface MarkerPopupProps {
   report: Report;
@@ -9,6 +10,8 @@ interface MarkerPopupProps {
 }
 
 export function MarkerPopup({ report, locale }: MarkerPopupProps) {
+  const tSev = useTranslations("Severity");
+  const tRD = useTranslations("ReportDetail");
   const severityColor: Record<string, string> = {
     critical: "#FF2D55",
     high: "#FF9F0A",
@@ -22,7 +25,7 @@ export function MarkerPopup({ report, locale }: MarkerPopupProps) {
       <div className="px-4 py-3 border-b border-white/5" style={{ background: `${color}15` }}>
         <div className="flex items-center gap-2 text-xs uppercase tracking-widest" style={{ color }}>
           <Flame size={12} />
-          {report.severity}
+          {tSev(report.severity as "critical" | "high" | "medium" | "low")}
           <span className="ml-auto text-text-3">{report.time}</span>
         </div>
       </div>
@@ -32,13 +35,13 @@ export function MarkerPopup({ report, locale }: MarkerPopupProps) {
           <MapPin size={12} /> {report.district}
         </div>
         <div className="flex items-center gap-1.5 text-xs text-text-3">
-          <User size={12} /> {report.reporter || "—"}
+          <User size={12} /> {report.reporter || tRD("unknownReporter")}
         </div>
         <a
           href={`/${locale}/reports/${report.id}`}
           className="mt-2 text-xs uppercase tracking-wider text-accent-pink hover:text-pink-light"
         >
-          OPEN →
+          {tRD("openLink")}
         </a>
       </div>
     </div>

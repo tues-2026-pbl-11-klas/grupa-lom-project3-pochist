@@ -35,5 +35,29 @@
     "label": "Language",
     "bg": "Bulgarian",
     "en": "English"
+  },
+  "Severity": {
+    "critical": "CRITICAL",
+    "high": "HIGH",
+    "medium": "MEDIUM",
+    "low": "LOW"
+  },
+  "Status": {
+    "open": "OPEN",
+    "inProgress": "IN PROGRESS",
+    "done": "DONE"
+  },
+  "Reports": {
+    "signalsCount": "{n} signals",
+    "noMatch": "No reports match the current filters.",
+    "loadingMap": "Loading map…"
+  },
+  "ReportDetail": {
+    "back": "back to reports",
+    "claim": "Claim",
+    "markComplete": "Mark complete",
+    "confirmSighting": "Confirm sighting",
+    "unknownReporter": "—",
+    "openLink": "OPEN →"
   }
 }
