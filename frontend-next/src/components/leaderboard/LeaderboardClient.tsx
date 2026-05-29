@@ -1,15 +1,10 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import type { LeaderboardUser, User } from "@/lib/api/mappers";
 import { Podium } from "./Podium";
 import { LeaderRow, type SortBy } from "./LeaderRow";
-
-const TABS: { id: SortBy; label: string }[] = [
-  { id: "awards",     label: "НАГРАДИ" },
-  { id: "cleanings",  label: "ПОЧИСТВАНИЯ" },
-  { id: "points",     label: "ТОЧКИ" },
-];
 
 interface Props {
   users: LeaderboardUser[];
@@ -17,7 +12,14 @@ interface Props {
 }
 
 export function LeaderboardClient({ users, me }: Props) {
+  const t = useTranslations("Leaderboard");
   const [sortBy, setSortBy] = useState<SortBy>("awards");
+
+  const TABS: { id: SortBy; label: string }[] = [
+    { id: "awards",    label: t("tabs.awards") },
+    { id: "cleanings", label: t("tabs.cleanings") },
+    { id: "points",    label: t("tabs.points") },
+  ];
 
   const sorted = useMemo(() => {
     const cmp = (a: LeaderboardUser, b: LeaderboardUser) =>
@@ -33,7 +35,7 @@ export function LeaderboardClient({ users, me }: Props) {
   return (
     <main className="max-w-3xl mx-auto px-4 py-6 flex flex-col gap-5">
       <h1 className="text-text-1 text-xl tracking-widest" style={{ fontFamily: "var(--font-display)" }}>
-        КЛАСАЦИЯ
+        {t("title")}
       </h1>
 
       <div className="flex bg-bg-card rounded-md p-1 gap-1">
@@ -54,7 +56,7 @@ export function LeaderboardClient({ users, me }: Props) {
 
       {myEntry && (
         <div className="flex items-center justify-between px-4 py-2.5 rounded-xl border border-accent-pink-border bg-accent-pink-dim text-sm">
-          <span className="text-text-2 text-xs uppercase tracking-wider">ТВОЯТА ПОЗИЦИЯ</span>
+          <span className="text-text-2 text-xs uppercase tracking-wider">{t("yourPosition")}</span>
           <span className="text-text-1">
             #{myEntry.rank} ·{" "}
             {sortBy === "awards" ? myEntry.awards :

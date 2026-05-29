@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Flame, Paintbrush, Trophy } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { LeaderboardUser } from "@/lib/api/mappers";
 
 const RANK_COLORS = ["#ffffff", "#aaaaaa", "#777777"];
@@ -8,6 +9,8 @@ const RANK_COLORS = ["#ffffff", "#aaaaaa", "#777777"];
 export type SortBy = "awards" | "cleanings" | "points";
 
 export function LeaderRow({ user, isMe, index, sortBy }: { user: LeaderboardUser; isMe: boolean; index: number; sortBy: SortBy }) {
+  const tLb = useTranslations("Leaderboard");
+  const tLevels = useTranslations("Levels");
   const rankColor = index < 3 ? RANK_COLORS[index] : undefined;
 
   const value =
@@ -15,10 +18,7 @@ export function LeaderRow({ user, isMe, index, sortBy }: { user: LeaderboardUser
     sortBy === "cleanings" ? user.cleanings :
     user.points;
 
-  const label =
-    sortBy === "awards" ? "AWARDS" :
-    sortBy === "cleanings" ? "CLEANINGS" :
-    "POINTS";
+  const label = tLb(`labels.${sortBy}`);
 
   return (
     <div
@@ -50,17 +50,17 @@ export function LeaderRow({ user, isMe, index, sortBy }: { user: LeaderboardUser
               <Check size={10} strokeWidth={3} />
             </span>
           )}
-          {isMe && <span className="px-1.5 py-0.5 rounded text-[0.625rem] uppercase tracking-wider bg-accent-pink-dim text-accent-pink">YOU</span>}
+          {isMe && <span className="px-1.5 py-0.5 rounded text-[0.625rem] uppercase tracking-wider bg-accent-pink-dim text-accent-pink">{tLb("you")}</span>}
         </div>
         <div className="flex items-center gap-2 text-text-3 text-xs mt-0.5">
-          <span>{user.level}</span>
+          <span>{tLevels(user.level as "novice" | "active" | "pro" | "master" | "legend")}</span>
           {user.streak > 0 && <span>· <Flame size={10} strokeWidth={2} className="inline" /> {user.streak}</span>}
           <span>· <Paintbrush size={10} strokeWidth={2} className="inline" /> {user.cleanings}</span>
         </div>
         {sortBy === "awards" && user.earnedBadges.length > 0 && (
           <div className="flex items-center gap-1 mt-1 text-text-3 text-xs">
             {user.earnedBadges.slice(0, 3).map((b) => (
-              <span key={b.id} title={b.name}>★</span>
+              <span key={b.id}>★</span>
             ))}
             {user.earnedBadges.length > 3 && <span className="text-text-3">+{user.earnedBadges.length - 3}</span>}
           </div>
@@ -70,7 +70,7 @@ export function LeaderRow({ user, isMe, index, sortBy }: { user: LeaderboardUser
       <div className="text-right">
         <div className="text-text-1 text-base" style={{ color: rankColor }}>{value.toLocaleString()}</div>
         <div className="text-text-3 text-[0.625rem] uppercase tracking-wider flex items-center gap-1 justify-end">
-          {label === "AWARDS" && <Trophy size={10} strokeWidth={2} />} {label}
+          {sortBy === "awards" && <Trophy size={10} strokeWidth={2} />} {label}
         </div>
       </div>
     </div>

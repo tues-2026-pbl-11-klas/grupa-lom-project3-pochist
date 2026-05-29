@@ -67,6 +67,21 @@
     "master": "MASTER",
     "legend": "LEGEND"
   },
+  "Leaderboard": {
+    "title": "LEADERBOARD",
+    "yourPosition": "YOUR POSITION",
+    "you": "YOU",
+    "tabs": {
+      "awards": "AWARDS",
+      "cleanings": "CLEANINGS",
+      "points": "POINTS"
+    },
+    "labels": {
+      "awards": "AWARDS",
+      "cleanings": "CLEANINGS",
+      "points": "POINTS"
+    }
+  },
   "NewReport": {
     "title": "NEW SIGNAL",
     "back": "back",

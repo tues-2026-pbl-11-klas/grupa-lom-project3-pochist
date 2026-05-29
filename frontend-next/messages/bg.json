@@ -67,6 +67,21 @@
     "master": "МАСТЪР",
     "legend": "ЛЕГЕНДА"
   },
+  "Leaderboard": {
+    "title": "КЛАСАЦИЯ",
+    "yourPosition": "ТВОЯТА ПОЗИЦИЯ",
+    "you": "ТИ",
+    "tabs": {
+      "awards": "НАГРАДИ",
+      "cleanings": "ПОЧИСТВАНИЯ",
+      "points": "ТОЧКИ"
+    },
+    "labels": {
+      "awards": "НАГРАДИ",
+      "cleanings": "ПОЧИСТВАНИЯ",
+      "points": "ТОЧКИ"
+    }
+  },
   "NewReport": {
     "title": "НОВ СИГНАЛ",
     "back": "обратно",
