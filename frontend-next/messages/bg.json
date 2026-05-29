@@ -60,6 +60,13 @@
     "unknownReporter": "—",
     "openLink": "ОТВОРИ →"
   },
+  "Levels": {
+    "novice": "НОВИЧ",
+    "active": "АКТИВЕН",
+    "pro": "ПРО",
+    "master": "МАСТЪР",
+    "legend": "ЛЕГЕНДА"
+  },
   "NewReport": {
     "title": "НОВ СИГНАЛ",
     "back": "обратно",

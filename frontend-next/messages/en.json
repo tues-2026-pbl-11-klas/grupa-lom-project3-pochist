@@ -60,6 +60,13 @@
     "unknownReporter": "—",
     "openLink": "OPEN →"
   },
+  "Levels": {
+    "novice": "NOVICE",
+    "active": "ACTIVE",
+    "pro": "PRO",
+    "master": "MASTER",
+    "legend": "LEGEND"
+  },
   "NewReport": {
     "title": "NEW SIGNAL",
     "back": "back",

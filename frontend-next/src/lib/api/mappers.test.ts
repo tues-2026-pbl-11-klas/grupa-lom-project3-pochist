@@ -2,18 +2,18 @@ import { describe, expect, it } from "vitest";
 import { mapApiUser, mapApiReport, deriveLevel, mapLeaderboardUser, deriveBadges } from "./mappers";
 
 describe("deriveLevel", () => {
-  it("returns НОВИЧ for 0-499 points", () => {
-    expect(deriveLevel(0)).toMatchObject({ level: "НОВИЧ", levelIcon: "sprout", nextLevelPts: 500 });
-    expect(deriveLevel(499)).toMatchObject({ level: "НОВИЧ" });
+  it("returns novice for 0-499 points", () => {
+    expect(deriveLevel(0)).toMatchObject({ level: "novice", levelIcon: "sprout", nextLevelPts: 500 });
+    expect(deriveLevel(499)).toMatchObject({ level: "novice" });
   });
-  it("returns АКТИВЕН for 500-1499", () => {
-    expect(deriveLevel(500).level).toBe("АКТИВЕН");
-    expect(deriveLevel(1499).level).toBe("АКТИВЕН");
+  it("returns active for 500-1499", () => {
+    expect(deriveLevel(500).level).toBe("active");
+    expect(deriveLevel(1499).level).toBe("active");
   });
-  it("returns ПРО / МАСТЪР / ЛЕГЕНДА at the right thresholds", () => {
-    expect(deriveLevel(1500).level).toBe("ПРО");
-    expect(deriveLevel(3000).level).toBe("МАСТЪР");
-    expect(deriveLevel(5000).level).toBe("ЛЕГЕНДА");
+  it("returns pro / master / legend at the right thresholds", () => {
+    expect(deriveLevel(1500).level).toBe("pro");
+    expect(deriveLevel(3000).level).toBe("master");
+    expect(deriveLevel(5000).level).toBe("legend");
   });
 });
 
@@ -33,7 +33,7 @@ describe("mapApiUser", () => {
     expect(u.id).toBe("u1");
     expect(u.name).toBe("TestUser");
     expect(u.points).toBe(250);
-    expect(u.level).toBe("НОВИЧ");
+    expect(u.level).toBe("novice");
     expect(u.verified).toBe(true);
     expect(u.avatar).toBe("TE");
   });

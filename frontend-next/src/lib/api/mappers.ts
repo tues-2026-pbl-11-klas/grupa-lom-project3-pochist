@@ -35,11 +35,11 @@ export interface Report {
 }
 
 const LEVEL_THRESHOLDS = [
-  { level: "НОВИЧ", icon: "sprout", min: 0, max: 499 },
-  { level: "АКТИВЕН", icon: "award", min: 500, max: 1499 },
-  { level: "ПРО", icon: "medal", min: 1500, max: 2999 },
-  { level: "МАСТЪР", icon: "gem", min: 3000, max: 4999 },
-  { level: "ЛЕГЕНДА", icon: "trophy", min: 5000, max: Infinity },
+  { level: "novice",  icon: "sprout", min: 0,    max: 499 },
+  { level: "active",  icon: "award",  min: 500,  max: 1499 },
+  { level: "pro",     icon: "medal",  min: 1500, max: 2999 },
+  { level: "master",  icon: "gem",    min: 3000, max: 4999 },
+  { level: "legend",  icon: "trophy", min: 5000, max: Infinity },
 ];
 
 export function deriveLevel(points: number) {
@@ -88,9 +88,9 @@ export function mapApiReport(data: Record<string, unknown>): Report {
   return {
     id,
     reportId: data.reportId as string | undefined,
-    title: desc ? desc.slice(0, 50) : "Сигнал",
+    title: desc ? desc.slice(0, 50) : "",
     location: `${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E`,
-    district: (data.district as string) ?? "София",
+    district: (data.district as string) ?? "",
     lat,
     lng,
     status,
