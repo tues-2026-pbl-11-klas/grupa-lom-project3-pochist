@@ -59,5 +59,22 @@
     "confirmSighting": "Потвърди наблюдение",
     "unknownReporter": "—",
     "openLink": "ОТВОРИ →"
+  },
+  "NewReport": {
+    "title": "НОВ СИГНАЛ",
+    "back": "обратно",
+    "description": "Описание",
+    "descriptionPlaceholder": "Какво видяхте?",
+    "latitude": "Ширина",
+    "longitude": "Дължина",
+    "severity": "Сериозност",
+    "severityCritical": "Критично",
+    "severityHigh": "Сериозно",
+    "severityMedium": "Средно",
+    "severityLow": "Леко",
+    "photo": "Снимка (по избор)",
+    "submit": "Изпрати сигнал",
+    "submitting": "Изпращане...",
+    "failure": "Изпращането се провали"
   }
 }

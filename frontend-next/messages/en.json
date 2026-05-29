@@ -59,5 +59,22 @@
     "confirmSighting": "Confirm sighting",
     "unknownReporter": "—",
     "openLink": "OPEN →"
+  },
+  "NewReport": {
+    "title": "NEW SIGNAL",
+    "back": "back",
+    "description": "Description",
+    "descriptionPlaceholder": "What did you see?",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "severity": "Severity",
+    "severityCritical": "Critical",
+    "severityHigh": "High",
+    "severityMedium": "Medium",
+    "severityLow": "Low",
+    "photo": "Photo (optional)",
+    "submit": "Submit report",
+    "submitting": "Submitting...",
+    "failure": "Submission failed"
   }
 }
