@@ -67,6 +67,55 @@
     "master": "MASTER",
     "legend": "LEGEND"
   },
+  "Rewards": {
+    "title": "REWARDS",
+    "hero": {
+      "balanceLabel": "AVAILABLE POINTS",
+      "chistPoints": "CHIST POINTS",
+      "cleanings": "CLEANINGS",
+      "reports": "REPORTS",
+      "streak": "STREAK"
+    },
+    "tabs": {
+      "shop": "SHOP",
+      "history": "HISTORY"
+    },
+    "categories": {
+      "all": "ALL",
+      "food": "FOOD",
+      "eco": "ECO",
+      "transport": "TRANSPORT",
+      "experience": "EXPERIENCE",
+      "status": "STATUS"
+    },
+    "card": {
+      "taken": "TAKEN",
+      "moreNeeded": "{n} more points",
+      "hot": "HOT",
+      "new": "NEW"
+    },
+    "claim": {
+      "confirmTitle": "Confirm reward",
+      "partner": "Partner: {name}",
+      "points": "{n} points",
+      "cancel": "Cancel",
+      "confirm": "Claim",
+      "success": "{name} — claimed!"
+    },
+    "history": {
+      "empty": "No history yet"
+    }
+  },
+  "RewardCatalog": {
+    "1": { "name": "Free coffee",          "desc": "One free drink at partner cafes in Sofia.",                   "partner": "COSTA COFFEE · STARBUCKS" },
+    "2": { "name": "Plant a tree",         "desc": "We plant a tree in your name in a Sofia park.",              "partner": "SOFIA GREEN INITIATIVE" },
+    "3": { "name": "Free transit",         "desc": "1-month city transit pass.",                                 "partner": "SOFIA URBAN MOBILITY CENTER" },
+    "4": { "name": "20% off meal",         "desc": "20% off at partner restaurants.",                            "partner": "HAPPY · HAPPY BAR & GRILL" },
+    "5": { "name": "Eco product pack",     "desc": "Set of biodegradable products from SofiaEco.",               "partner": "SOFIAECO STORE" },
+    "6": { "name": "Verified User status", "desc": "Official VRF badge and 2x points per task.",                 "partner": "CHIST PLATFORM" },
+    "7": { "name": "Concert / Event",      "desc": "2 free tickets to a partner event in Sofia.",                "partner": "SOFIA LIVE" },
+    "8": { "name": "Cleanup kit",          "desc": "Professional eco cleanup kit.",                              "partner": "ECO TOOLS BG" }
+  },
   "Badges": {
     "unlocked": "{earned} / {total} UNLOCKED",
     "first_report":  { "name": "First report",     "desc": "Reported your first cleanup" },

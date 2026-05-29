@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import type { User } from "@/lib/api/mappers";
 import { REWARDS, CATEGORIES, type Reward, type Category } from "@/lib/data/rewards";
 import { useApp } from "@/context/AppContext";
@@ -21,6 +22,9 @@ function saveHistory(items: HistoryItem[]) {
 }
 
 export function RewardsClient({ user }: { user: User }) {
+  const t = useTranslations("Rewards");
+  const tCat = useTranslations("RewardCatalog");
+  const tClaim = useTranslations("Rewards.claim");
   const { pushNotification } = useApp();
 
   const [cat, setCat] = useState<Category>("all");
@@ -44,14 +48,15 @@ export function RewardsClient({ user }: { user: User }) {
 
   const confirmClaim = () => {
     if (!pending) return;
-    pushNotification({ type: "success", message: `${pending.name} — взето успешно!`, duration: 4000 });
+    const name = tCat(`${pending.id}.name` as `${string}.name`);
+    pushNotification({ type: "success", message: tClaim("success", { name }), duration: 4000 });
     setClaimed((s) => new Set([...s, pending.id]));
     const now = new Date();
     const item: HistoryItem = {
       id: Date.now(),
-      icon: pending.icon,
-      name: pending.name,
-      date: now.toLocaleDateString("bg-BG", { day: "numeric", month: "long", year: "numeric" }),
+      icon: "star",
+      name,
+      date: now.toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }),
       pts: -pending.cost,
     };
     const updated = [item, ...history];
@@ -62,20 +67,20 @@ export function RewardsClient({ user }: { user: User }) {
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-6 flex flex-col gap-5">
-      <h1 className="text-text-1 text-xl tracking-widest" style={{ fontFamily: "var(--font-display)" }}>НАГРАДИ</h1>
+      <h1 className="text-text-1 text-xl tracking-widest" style={{ fontFamily: "var(--font-display)" }}>{t("title")}</h1>
 
       <RewardsHero user={user} />
 
       <div className="flex bg-bg-card rounded-md p-1 gap-1">
-        {[{ id: "shop" as const, label: "МАГАЗИН" }, { id: "history" as const, label: "ИСТОРИЯ" }].map((t) => (
+        {[{ id: "shop" as const, label: t("tabs.shop") }, { id: "history" as const, label: t("tabs.history") }].map((tt) => (
           <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
+            key={tt.id}
+            onClick={() => setTab(tt.id)}
             className={`flex-1 py-2 rounded text-xs uppercase tracking-wider transition ${
-              tab === t.id ? "bg-accent-pink text-bg-base" : "text-text-2 hover:text-text-1"
+              tab === tt.id ? "bg-accent-pink text-bg-base" : "text-text-2 hover:text-text-1"
             }`}
           >
-            {t.label}
+            {tt.label}
           </button>
         ))}
       </div>
@@ -91,7 +96,7 @@ export function RewardsClient({ user }: { user: User }) {
                   cat === c ? "bg-accent-pink text-bg-base" : "bg-brand-primary-dim text-text-2 hover:text-text-1"
                 }`}
               >
-                {c === "all" ? "ВСИЧКИ" : c.toUpperCase()}
+                {t(`categories.${c}`)}
               </button>
             ))}
           </div>

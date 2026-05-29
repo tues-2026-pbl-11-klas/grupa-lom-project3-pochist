@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 export interface HistoryItem {
   id: number;
   icon: string;
@@ -9,10 +11,11 @@ export interface HistoryItem {
 }
 
 export function HistoryList({ items }: { items: HistoryItem[] }) {
+  const t = useTranslations("Rewards.history");
   if (items.length === 0) {
     return (
       <div className="text-center text-text-3 text-xs uppercase tracking-wider py-6">
-        Няма история
+        {t("empty")}
       </div>
     );
   }

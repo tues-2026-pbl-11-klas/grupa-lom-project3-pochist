@@ -67,6 +67,55 @@
     "master": "МАСТЪР",
     "legend": "ЛЕГЕНДА"
   },
+  "Rewards": {
+    "title": "НАГРАДИ",
+    "hero": {
+      "balanceLabel": "НАЛИЧНИ ТОЧКИ",
+      "chistPoints": "CHIST POINTS",
+      "cleanings": "ПОЧИСТВАНИЯ",
+      "reports": "СИГНАЛИ",
+      "streak": "СТРИЙК"
+    },
+    "tabs": {
+      "shop": "МАГАЗИН",
+      "history": "ИСТОРИЯ"
+    },
+    "categories": {
+      "all": "ВСИЧКИ",
+      "food": "ХРАНА",
+      "eco": "ЕКО",
+      "transport": "ТРАНСПОРТ",
+      "experience": "ПРЕЖИВЯВАНЕ",
+      "status": "СТАТУС"
+    },
+    "card": {
+      "taken": "ВЗЕТО",
+      "moreNeeded": "Още {n} точки",
+      "hot": "HOT",
+      "new": "NEW"
+    },
+    "claim": {
+      "confirmTitle": "Потвърди награда",
+      "partner": "Партньор: {name}",
+      "points": "{n} точки",
+      "cancel": "Отказ",
+      "confirm": "Вземи",
+      "success": "{name} — взето успешно!"
+    },
+    "history": {
+      "empty": "Няма история"
+    }
+  },
+  "RewardCatalog": {
+    "1": { "name": "Безплатно кафе",        "desc": "Една безплатна напитка в партньорски кафенета в София.",   "partner": "COSTA COFFEE · STARBUCKS" },
+    "2": { "name": "Засади дърво",          "desc": "Организираме засаждане на дърво в твое име в парк в София.", "partner": "SOFIA GREEN INITIATIVE" },
+    "3": { "name": "Безплатен транспорт",   "desc": "Карта за градски транспорт за 1 месец.",                    "partner": "ЦЕНТЪРА ЗА ГРАДСКА МОБИЛНОСТ" },
+    "4": { "name": "Отстъпка 20% храна",    "desc": "20% намаление в партньорски ресторанти.",                   "partner": "HAPPY · HAPPY BAR & GRILL" },
+    "5": { "name": "Еко продуктов пакет",   "desc": "Комплект от биоразградими продукти от SofiaEco.",           "partner": "SOFIAECO STORE" },
+    "6": { "name": "Verified User статус",  "desc": "Получи официалния VRF badge и 2x точки за всяка задача.",   "partner": "CHIST PLATFORM" },
+    "7": { "name": "Концерт / Събитие",     "desc": "2 безплатни билета за партньорско събитие в София.",        "partner": "SOFIA LIVE" },
+    "8": { "name": "Почистващ комплект",    "desc": "Професионален еко комплект за почистване.",                 "partner": "ECO TOOLS BG" }
+  },
   "Badges": {
     "unlocked": "{earned} / {total} ОТКЛЮЧЕНИ",
     "first_report":  { "name": "Първи сигнал",     "desc": "Докладва първото замърсяване" },
