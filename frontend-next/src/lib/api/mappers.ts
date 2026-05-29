@@ -1,3 +1,5 @@
+import { BADGES, type Badge } from "@/lib/data/badges";
+
 export interface User {
   id: string;
   name: string;
@@ -100,4 +102,37 @@ export function mapApiReport(data: Record<string, unknown>): Report {
     gps: { lat, lng },
     photoUrl: (data.photoUrl as string | null) ?? null,
   };
+}
+
+export interface LeaderboardUser extends User {
+  rank: number;
+  awards: number;
+  earnedBadges: Badge[];
+}
+
+interface DerivableUser {
+  points: number;
+  streak: number;
+  cleanings: number;
+  verified: boolean;
+}
+
+export function deriveBadges(u: DerivableUser): Badge[] {
+  return BADGES.filter((b) => {
+    if (b.id === "first_report" && u.cleanings > 0) return true;
+    if (b.id === "first_clean" && u.cleanings > 0) return true;
+    if (b.id === "streak_7" && u.streak >= 7) return true;
+    if (b.id === "clean_10" && u.cleanings >= 10) return true;
+    if (b.id === "verified" && u.verified) return true;
+    if (b.id === "eco_legend" && u.points >= 5000) return true;
+    if (b.id === "district_hero" && u.cleanings >= 5) return true;
+    if (b.id === "team_player" && u.cleanings >= 20) return true;
+    return false;
+  });
+}
+
+export function mapLeaderboardUser(data: Record<string, unknown>, rank: number): LeaderboardUser {
+  const user = mapApiUser(data);
+  const earned = deriveBadges(user);
+  return { ...user, rank, awards: earned.length, earnedBadges: earned };
 }

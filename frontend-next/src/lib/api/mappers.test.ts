@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mapApiUser, mapApiReport, deriveLevel } from "./mappers";
+import { mapApiUser, mapApiReport, deriveLevel, mapLeaderboardUser, deriveBadges } from "./mappers";
 
 describe("deriveLevel", () => {
   it("returns НОВИЧ for 0-499 points", () => {
@@ -74,5 +74,48 @@ describe("mapApiReport", () => {
     expect(mapApiReport({ reportId: "x", status: "DONE" }).status).toBe("done");
     expect(mapApiReport({ reportId: "x", status: "OPEN" }).status).toBe("open");
     expect(mapApiReport({ reportId: "x", status: "WEIRD" }).status).toBe("open");
+  });
+});
+
+describe("deriveBadges", () => {
+  it("awards first_report + first_clean when cleanings > 0", () => {
+    const u = { points: 0, streak: 0, cleanings: 1, verified: false };
+    const ids = deriveBadges(u).map((b) => b.id);
+    expect(ids).toContain("first_report");
+    expect(ids).toContain("first_clean");
+  });
+
+  it("awards streak_7 at streak >= 7 and clean_10 at cleanings >= 10", () => {
+    const ids = deriveBadges({ points: 0, streak: 7, cleanings: 10, verified: false }).map((b) => b.id);
+    expect(ids).toEqual(expect.arrayContaining(["streak_7", "clean_10"]));
+  });
+
+  it("awards verified when user.verified is true", () => {
+    expect(deriveBadges({ points: 0, streak: 0, cleanings: 0, verified: true }).map((b) => b.id)).toContain("verified");
+  });
+
+  it("awards eco_legend at 5000+ points", () => {
+    expect(deriveBadges({ points: 5000, streak: 0, cleanings: 0, verified: false }).map((b) => b.id)).toContain("eco_legend");
+  });
+
+  it("awards district_hero at cleanings >= 5 and team_player at cleanings >= 20", () => {
+    const ids = deriveBadges({ points: 0, streak: 0, cleanings: 20, verified: false }).map((b) => b.id);
+    expect(ids).toEqual(expect.arrayContaining(["district_hero", "team_player"]));
+  });
+
+  it("awards nothing for a brand-new user", () => {
+    expect(deriveBadges({ points: 0, streak: 0, cleanings: 0, verified: false })).toHaveLength(0);
+  });
+});
+
+describe("mapLeaderboardUser", () => {
+  it("adds rank, awards, earnedBadges to a User", () => {
+    const raw = { id: "u1", username: "Maria", points: 5420, streak: 18, role: "VerifiedUser", cleanings: 27, reports: 41, createdAt: "2024-11-03T08:00:00Z" };
+    const lb = mapLeaderboardUser(raw, 1);
+    expect(lb.rank).toBe(1);
+    expect(lb.name).toBe("Maria");
+    expect(lb.verified).toBe(true);
+    expect(lb.earnedBadges.length).toBeGreaterThan(0);
+    expect(lb.awards).toBe(lb.earnedBadges.length);
   });
 });
