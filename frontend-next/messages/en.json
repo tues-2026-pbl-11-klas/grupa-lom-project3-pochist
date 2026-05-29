@@ -67,6 +67,17 @@
     "master": "MASTER",
     "legend": "LEGEND"
   },
+  "Badges": {
+    "unlocked": "{earned} / {total} UNLOCKED",
+    "first_report":  { "name": "First report",     "desc": "Reported your first cleanup" },
+    "first_clean":   { "name": "First cleanup",    "desc": "Completed your first cleanup" },
+    "streak_7":      { "name": "7-day streak",     "desc": "Active 7 days in a row" },
+    "clean_10":      { "name": "10 cleanups",      "desc": "Completed 10 successful cleanups" },
+    "verified":      { "name": "Verified User",    "desc": "Proven activity and reliability" },
+    "eco_legend":    { "name": "Eco legend",       "desc": "Reach 5000 points" },
+    "district_hero": { "name": "District hero",    "desc": "Cleaned 5 sites in one district" },
+    "team_player":   { "name": "Team player",      "desc": "Confirmed 20 tasks by others" }
+  },
   "Profile": {
     "verified": "VERIFIED",
     "xpToNext": "To next level",

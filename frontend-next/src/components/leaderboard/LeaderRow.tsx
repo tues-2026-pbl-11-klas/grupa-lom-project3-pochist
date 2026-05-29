@@ -11,6 +11,7 @@ export type SortBy = "awards" | "cleanings" | "points";
 export function LeaderRow({ user, isMe, index, sortBy }: { user: LeaderboardUser; isMe: boolean; index: number; sortBy: SortBy }) {
   const tLb = useTranslations("Leaderboard");
   const tLevels = useTranslations("Levels");
+  const tBadges = useTranslations("Badges");
   const rankColor = index < 3 ? RANK_COLORS[index] : undefined;
 
   const value =
@@ -60,7 +61,7 @@ export function LeaderRow({ user, isMe, index, sortBy }: { user: LeaderboardUser
         {sortBy === "awards" && user.earnedBadges.length > 0 && (
           <div className="flex items-center gap-1 mt-1 text-text-3 text-xs">
             {user.earnedBadges.slice(0, 3).map((b) => (
-              <span key={b.id}>★</span>
+              <span key={b.id} title={tBadges(`${b.id}.name` as `${string}.name`)}>★</span>
             ))}
             {user.earnedBadges.length > 3 && <span className="text-text-3">+{user.earnedBadges.length - 3}</span>}
           </div>
