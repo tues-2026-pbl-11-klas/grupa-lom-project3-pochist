@@ -6,8 +6,35 @@ variable "environment" {
   type = string
 }
 
-variable "argocd_hostname" {
+variable "location" {
   type = string
+}
+
+variable "rg_name" {
+  type = string
+}
+
+variable "github_actions_object_id" {
+  description = "Object ID of the AKS kubelet managed identity"
+  type        = string
+}
+
+variable "github_actions_client_id" {
+  description = "clientId from AZURE_CREDENTIALS JSON"
+  type        = string
+}
+
+variable "acr_registry" {
+  type = string
+}
+
+variable "acr_username" {
+  type = string
+}
+
+variable "acr_password" {
+  type      = string
+  sensitive = true
 }
 
 variable "db_name" {
@@ -60,24 +87,7 @@ variable "rabbitmq_password" {
   sensitive   = true
 }
 
-variable "kube_host" {
-  type = string
-}
-
-variable "kube_client_certificate" {
-  type = string
-}
-
-variable "kube_client_key" {
-  type      = string
-  sensitive = true
-}
-
-variable "kube_ca_certificate" {
-  type = string
-}
-
-variable "key_vault_name" {
-  description = "Name of the Azure Key Vault"
+variable "aks_kubelet_object_id" {
+  description = "Object ID of AKS kubelet managed identity"
   type        = string
 }

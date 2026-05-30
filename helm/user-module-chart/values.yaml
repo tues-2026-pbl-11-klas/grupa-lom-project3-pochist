@@ -60,9 +60,12 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 
+# Each service reads from its own secret + the shared RabbitMQ secret
 envFrom:
   - secretRef:
-      name: backend-secret
+      name: secret-user
+  - secretRef:
+      name: rabbitmq-secret
 
 httpRoute:
   enabled: false
