@@ -1,9 +1,5 @@
 data "azurerm_client_config" "current" {}
 
-data "azuread_service_principal" "github_actions" {
-  client_id = var.github_actions_client_id
-}
-
 resource "azurerm_key_vault" "main" {
   name                       = "kv-${var.project_name}-${var.environment}"
   location                   = var.location
@@ -13,21 +9,18 @@ resource "azurerm_key_vault" "main" {
   soft_delete_retention_days = 7
   purge_protection_enabled   = false
 
-  # Terraform runner – full access to manage secrets
   access_policy {
     tenant_id          = data.azurerm_client_config.current.tenant_id
     object_id          = data.azurerm_client_config.current.object_id
     secret_permissions = ["Get", "List", "Set", "Delete", "Recover", "Backup", "Restore", "Purge"]
   }
 
-  # GitHub Actions SP – read-only for cd.yaml
   access_policy {
     tenant_id          = data.azurerm_client_config.current.tenant_id
     object_id          = var.github_actions_object_id
     secret_permissions = ["Get", "List"]
   }
 
-  # AKS kubelet identity – read-only for Secret Store CSI driver
   access_policy {
     tenant_id          = data.azurerm_client_config.current.tenant_id
     object_id          = var.aks_kubelet_object_id
@@ -46,23 +39,26 @@ resource "azurerm_key_vault_secret" "acr_registry" {
   value        = var.acr_registry
   key_vault_id = azurerm_key_vault.main.id
 }
+
 resource "azurerm_key_vault_secret" "acr_username" {
   name         = "acr-username"
   value        = var.acr_username
   key_vault_id = azurerm_key_vault.main.id
 }
+
 resource "azurerm_key_vault_secret" "acr_password" {
   name         = "acr-password"
   value        = var.acr_password
   key_vault_id = azurerm_key_vault.main.id
 }
 
-# ── Database (shared creds; per-service URLs built in kubernetes module) ──────
+# ── Database ──────────────────────────────────────────────────
 resource "azurerm_key_vault_secret" "db_username" {
   name         = "db-username"
   value        = var.db_username
   key_vault_id = azurerm_key_vault.main.id
 }
+
 resource "azurerm_key_vault_secret" "db_password" {
   name         = "db-password"
   value        = var.db_password
@@ -75,16 +71,19 @@ resource "azurerm_key_vault_secret" "db_url_users" {
   value        = "jdbc:postgresql://cnpg-cluster-rw.db.svc.cluster.local:5432/chist_users"
   key_vault_id = azurerm_key_vault.main.id
 }
+
 resource "azurerm_key_vault_secret" "db_url_reports" {
   name         = "db-url-reports"
   value        = "jdbc:postgresql://cnpg-cluster-rw.db.svc.cluster.local:5432/chist_reports"
   key_vault_id = azurerm_key_vault.main.id
 }
+
 resource "azurerm_key_vault_secret" "db_url_verification" {
   name         = "db-url-verification"
   value        = "jdbc:postgresql://cnpg-cluster-rw.db.svc.cluster.local:5432/chist_verification"
   key_vault_id = azurerm_key_vault.main.id
 }
+
 resource "azurerm_key_vault_secret" "db_url_notif" {
   name         = "db-url-notif"
   value        = "jdbc:postgresql://cnpg-cluster-rw.db.svc.cluster.local:5432/chist_notif"
@@ -104,6 +103,7 @@ resource "azurerm_key_vault_secret" "computer_vision_endpoint" {
   value        = var.computer_vision_endpoint
   key_vault_id = azurerm_key_vault.main.id
 }
+
 resource "azurerm_key_vault_secret" "computer_vision_key" {
   name         = "computer-vision-key"
   value        = var.computer_vision_key
@@ -116,16 +116,19 @@ resource "azurerm_key_vault_secret" "mail_host" {
   value        = var.mail_host
   key_vault_id = azurerm_key_vault.main.id
 }
+
 resource "azurerm_key_vault_secret" "mail_port" {
   name         = "mail-port"
   value        = var.mail_port
   key_vault_id = azurerm_key_vault.main.id
 }
+
 resource "azurerm_key_vault_secret" "mail_username" {
   name         = "mail-username"
   value        = var.mail_username
   key_vault_id = azurerm_key_vault.main.id
 }
+
 resource "azurerm_key_vault_secret" "mail_password" {
   name         = "mail-password"
   value        = var.mail_password

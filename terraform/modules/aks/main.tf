@@ -31,6 +31,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
     Environment = var.environment
     Project     = var.project_name
   }
+  lifecycle {
+    ignore_changes = [
+      default_node_pool[0].upgrade_settings
+    ]
+  }
 }
 
 resource "azurerm_role_assignment" "aks_acr_pull" {

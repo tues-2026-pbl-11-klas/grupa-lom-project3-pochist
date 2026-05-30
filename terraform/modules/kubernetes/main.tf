@@ -31,7 +31,6 @@ resource "helm_release" "cnpg_operator" {
   wait             = true
   timeout          = 300
 }
-
 # ── RabbitMQ ─────────────────────────────────────────────────
 resource "helm_release" "rabbitmq" {
   name             = "rabbitmq"
@@ -44,25 +43,28 @@ resource "helm_release" "rabbitmq" {
   timeout          = 600
 
   values = [yamlencode({
-  global = {
-    imageRegistry = "acrchistdev.azurecr.io"
-  }
-  auth = {
-    username = "chist"
-    password = var.rabbitmq_password
-  }
-  persistence = {
-    enabled = true
-    size    = "1Gi"
-  }
-  resources = {
-    requests = { cpu = "100m", memory = "256Mi" }
-    limits   = { cpu = "500m", memory = "512Mi" }
-  }
-  service = {
-    type = "ClusterIP"
-  }
-})]
+    global = {
+      imageRegistry = "acrchistdev.azurecr.io"
+      security = {
+        allowInsecureImages = true
+      }
+    }
+    auth = {
+      username = "chist"
+      password = var.rabbitmq_password
+    }
+    persistence = {
+      enabled = true
+      size    = "1Gi"
+    }
+    resources = {
+      requests = { cpu = "100m", memory = "256Mi" }
+      limits   = { cpu = "500m", memory = "512Mi" }
+    }
+    service = {
+      type = "ClusterIP"
+    }
+  })]
 
   depends_on = [helm_release.nginx_ingress]
 }
