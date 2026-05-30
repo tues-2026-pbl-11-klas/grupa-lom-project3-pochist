@@ -22,23 +22,23 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 8082
+  port: 8083
 
 ingress:
   enabled: false
 
 resources:
   requests:
-    cpu: 75m
-    memory: 64Mi
-  limits:
-    cpu: 300m
+    cpu: 100m
     memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
 
 livenessProbe:
   httpGet:
     path: /actuator/health
-    port: 8082
+    port: 8083
   initialDelaySeconds: 90
   periodSeconds: 15
   failureThreshold: 5
@@ -46,7 +46,7 @@ livenessProbe:
 readinessProbe:
   httpGet:
     path: /actuator/health
-    port: 8082
+    port: 8083
   initialDelaySeconds: 90
   periodSeconds: 15
   failureThreshold: 5
@@ -62,7 +62,9 @@ affinity: {}
 
 envFrom:
   - secretRef:
-      name: backend-secret
+      name: secret-notification
+  - secretRef:
+      name: rabbitmq-secret
 
 httpRoute:
   enabled: false

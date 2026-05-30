@@ -62,7 +62,9 @@ affinity: {}
 
 envFrom:
   - secretRef:
-      name: backend-secret
+      name: secret-report
+  - secretRef:
+      name: rabbitmq-secret
 
 httpRoute:
   enabled: false
