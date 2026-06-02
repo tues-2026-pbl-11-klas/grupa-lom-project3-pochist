@@ -1,145 +1,355 @@
-name: CD - Build & Push Images
+name: CD - Deploy to ACR
 
 on:
-push:
-branches:
-- main
+  push:
+    branches:
+      - main
 
 env:
-FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-detect-changes:
-name: Detect Changed Services
-runs-on: ubuntu-latest
+  detect-changes:
+    name: Detect Changed Services
+    runs-on: ubuntu-latest
+    outputs:
+      user: ${{ steps.changes.outputs.user }}
+      report: ${{ steps.changes.outputs.report }}
+      notification: ${{ steps.changes.outputs.notification }}
+      verification: ${{ steps.changes.outputs.verification }}
+      frontend: ${{ steps.changes.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-```
-outputs:
-  user: ${{ steps.changes.outputs.user }}
-  report: ${{ steps.changes.outputs.report }}
-  notification: ${{ steps.changes.outputs.notification }}
-  verification: ${{ steps.changes.outputs.verification }}
-  frontend: ${{ steps.changes.outputs.frontend }}
+      - id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            user:
+              - 'backend/user-module/**'
+            report:
+              - 'backend/report-module/**'
+            notification:
+              - 'backend/notification-module/**'
+            verification:
+              - 'backend/verification-module/**'
+            frontend:
+              - 'frontend/**'
 
-steps:
-  - uses: actions/checkout@v4
-    with:
-      fetch-depth: 0
+  build-user:
+    name: Build & Push user-module
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.user == 'true'
+    outputs:
+      sha_tag: ${{ steps.tags.outputs.sha_tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          namespace: admin
+          secrets: |
+            secret/data/acr registry | ACR_REGISTRY ;
+            secret/data/acr username | ACR_USERNAME ;
+            secret/data/acr password | ACR_PASSWORD
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ACR_REGISTRY }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
+      - id: tags
+        run: echo "sha_tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./backend/user-module
+          file: ./backend/user-module/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ACR_REGISTRY }}/chist-user:latest
+            ${{ env.ACR_REGISTRY }}/chist-user:${{ steps.tags.outputs.sha_tag }}
+          cache-from: type=gha,scope=user
+          cache-to: type=gha,mode=max,scope=user
 
-  - id: changes
-    uses: dorny/paths-filter@v3
-    with:
-      filters: |
-        user:
-          - 'backend/user-module/**'
+  build-report:
+    name: Build & Push report-module
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.report == 'true'
+    outputs:
+      sha_tag: ${{ steps.tags.outputs.sha_tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          namespace: admin
+          secrets: |
+            secret/data/acr registry | ACR_REGISTRY ;
+            secret/data/acr username | ACR_USERNAME ;
+            secret/data/acr password | ACR_PASSWORD
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ACR_REGISTRY }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
+      - id: tags
+        run: echo "sha_tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./backend/report-module
+          file: ./backend/report-module/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ACR_REGISTRY }}/chist-report:latest
+            ${{ env.ACR_REGISTRY }}/chist-report:${{ steps.tags.outputs.sha_tag }}
+          cache-from: type=gha,scope=report
+          cache-to: type=gha,mode=max,scope=report
 
-        report:
-          - 'backend/report-module/**'
+  build-notification:
+    name: Build & Push notification-module
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.notification == 'true'
+    outputs:
+      sha_tag: ${{ steps.tags.outputs.sha_tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          namespace: admin
+          secrets: |
+            secret/data/acr registry | ACR_REGISTRY ;
+            secret/data/acr username | ACR_USERNAME ;
+            secret/data/acr password | ACR_PASSWORD
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ACR_REGISTRY }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
+      - id: tags
+        run: echo "sha_tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./backend/notification-module
+          file: ./backend/notification-module/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ACR_REGISTRY }}/chist-notification:latest
+            ${{ env.ACR_REGISTRY }}/chist-notification:${{ steps.tags.outputs.sha_tag }}
+          cache-from: type=gha,scope=notification
+          cache-to: type=gha,mode=max,scope=notification
 
-        notification:
-          - 'backend/notification-module/**'
+  build-verification:
+    name: Build & Push verification-module
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.verification == 'true'
+    outputs:
+      sha_tag: ${{ steps.tags.outputs.sha_tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          namespace: admin
+          secrets: |
+            secret/data/acr registry | ACR_REGISTRY ;
+            secret/data/acr username | ACR_USERNAME ;
+            secret/data/acr password | ACR_PASSWORD
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ACR_REGISTRY }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
+      - id: tags
+        run: echo "sha_tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./backend/verification-module
+          file: ./backend/verification-module/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ACR_REGISTRY }}/chist-verification:latest
+            ${{ env.ACR_REGISTRY }}/chist-verification:${{ steps.tags.outputs.sha_tag }}
+          cache-from: type=gha,scope=verification
+          cache-to: type=gha,mode=max,scope=verification
 
-        verification:
-          - 'backend/verification-module/**'
+  build-frontend:
+    name: Build & Push frontend
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frontend == 'true'
+    outputs:
+      sha_tag: ${{ steps.tags.outputs.sha_tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          namespace: admin
+          secrets: |
+            secret/data/acr registry | ACR_REGISTRY ;
+            secret/data/acr username | ACR_USERNAME ;
+            secret/data/acr password | ACR_PASSWORD
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ACR_REGISTRY }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
+      - id: tags
+        run: echo "sha_tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ACR_REGISTRY }}/chist-frontend:latest
+            ${{ env.ACR_REGISTRY }}/chist-frontend:${{ steps.tags.outputs.sha_tag }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
 
-        frontend:
-          - 'frontend/**'
-```
+  update-helm-tags:
+    name: Update Helm Image Tags
+    runs-on: ubuntu-latest
+    needs:
+      - detect-changes
+      - build-user
+      - build-report
+      - build-notification
+      - build-verification
+      - build-frontend
+    if: |
+      always() && (
+        needs.build-user.result == 'success' ||
+        needs.build-report.result == 'success' ||
+        needs.build-notification.result == 'success' ||
+        needs.build-verification.result == 'success' ||
+        needs.build-frontend.result == 'success'
+      )
+    outputs:
+      sha_tag: ${{ steps.sha.outputs.sha_tag }}
+      user_updated: ${{ steps.flags.outputs.user }}
+      report_updated: ${{ steps.flags.outputs.report }}
+      notification_updated: ${{ steps.flags.outputs.notification }}
+      verification_updated: ${{ steps.flags.outputs.verification }}
+      frontend_updated: ${{ steps.flags.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-build-and-push:
-name: Build & Push
-runs-on: ubuntu-latest
+      - name: Set SHA tag
+        id: sha
+        run: echo "sha_tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
-```
-needs: detect-changes
+      - name: Set update flags
+        id: flags
+        run: |
+          echo "user=${{ needs.build-user.result == 'success' }}" >> $GITHUB_OUTPUT
+          echo "report=${{ needs.build-report.result == 'success' }}" >> $GITHUB_OUTPUT
+          echo "notification=${{ needs.build-notification.result == 'success' }}" >> $GITHUB_OUTPUT
+          echo "verification=${{ needs.build-verification.result == 'success' }}" >> $GITHUB_OUTPUT
+          echo "frontend=${{ needs.build-frontend.result == 'success' }}" >> $GITHUB_OUTPUT
 
-strategy:
-  matrix:
-    service:
-      - user
-      - report
-      - notification
-      - verification
-      - frontend
+      - name: Update user-module tag
+        if: needs.build-user.result == 'success'
+        run: sed -i "s/^  tag: .*/  tag: \"${{ steps.sha.outputs.sha_tag }}\"/" helm/user-module-chart/values.yaml
 
-steps:
-  - uses: actions/checkout@v4
-    with:
-      token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update report-module tag
+        if: needs.build-report.result == 'success'
+        run: sed -i "s/^  tag: .*/  tag: \"${{ steps.sha.outputs.sha_tag }}\"/" helm/report-module-chart/values.yaml
 
-  - name: Skip unchanged service
-    if: needs.detect-changes.outputs[matrix.service] != 'true'
-    run: |
-      echo "${{ matrix.service }} did not change"
-      exit 0
+      - name: Update notification-module tag
+        if: needs.build-notification.result == 'success'
+        run: sed -i "s/^  tag: .*/  tag: \"${{ steps.sha.outputs.sha_tag }}\"/" helm/notification-module-chart/values.yaml
 
-  - name: Azure Login
-    uses: azure/login@v2
-    with:
-      creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Update verification-module tag
+        if: needs.build-verification.result == 'success'
+        run: sed -i "s/^  tag: .*/  tag: \"${{ steps.sha.outputs.sha_tag }}\"/" helm/verification-module-chart/values.yaml
 
-  - name: Fetch ACR registry
-    run: |
-      ACR_REGISTRY=$(az keyvault secret show \
-        --vault-name "${{ secrets.AZURE_KEY_VAULT_NAME }}" \
-        --name "acr-registry" \
-        --query value -o tsv)
+      - name: Update frontend tag
+        if: needs.build-frontend.result == 'success'
+        run: sed -i "s/^  tag: .*/  tag: \"${{ steps.sha.outputs.sha_tag }}\"/" helm/frontend-chart/values.yaml
 
-      echo "ACR_REGISTRY=$ACR_REGISTRY" >> $GITHUB_ENV
+      - name: Commit and push updated tags
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add helm/*/values.yaml
+          git diff --staged --quiet || git commit -m "ci: update image tags to ${{ steps.sha.outputs.sha_tag }} [skip ci]"
+          git push
 
-  - name: Debug registry
-    run: |
-      echo "Registry: $ACR_REGISTRY"
+  argocd-sync:
+    name: Sync ArgoCD Applications
+    runs-on: ubuntu-latest
+    needs: update-helm-tags
+    if: always() && needs.update-helm-tags.result == 'success'
+    steps:
+      - name: Install ArgoCD CLI
+        run: |
+          curl -sSL -o /usr/local/bin/argocd \
+            https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          chmod +x /usr/local/bin/argocd
 
-  - name: Docker Login
-    uses: docker/login-action@v3
-    with:
-      registry: ${{ env.ACR_REGISTRY }}
-      username: ${{ secrets.ACR_USERNAME }}
-      password: ${{ secrets.ACR_PASSWORD }}
+      - name: Login to ArgoCD
+        run: |
+          argocd login ${{ secrets.ARGOCD_SERVER }} \
+            --auth-token ${{ secrets.ARGOCD_TOKEN }} \
+            --grpc-web \
+            --insecure
 
-  - uses: docker/setup-buildx-action@v3
+      - name: Sync user-module
+        if: needs.update-helm-tags.outputs.user_updated == 'true'
+        run: |
+          argocd app sync chist-user --force
+          argocd app wait chist-user --health --timeout 120
 
-  - name: Generate image tag
-    run: |
-      echo "IMAGE_TAG=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+      - name: Sync report-module
+        if: needs.update-helm-tags.outputs.report_updated == 'true'
+        run: |
+          argocd app sync chist-report --force
+          argocd app wait chist-report --health --timeout 120
 
-  - name: Set paths
-    run: |
-      if [ "${{ matrix.service }}" = "frontend" ]; then
-        echo "BUILD_CONTEXT=frontend" >> $GITHUB_ENV
-        echo "DOCKERFILE=frontend/Dockerfile" >> $GITHUB_ENV
-      else
-        echo "BUILD_CONTEXT=backend/${{ matrix.service }}-module" >> $GITHUB_ENV
-        echo "DOCKERFILE=backend/${{ matrix.service }}-module/Dockerfile" >> $GITHUB_ENV
-      fi
+      - name: Sync notification-module
+        if: needs.update-helm-tags.outputs.notification_updated == 'true'
+        run: |
+          argocd app sync chist-notification --force
+          argocd app wait chist-notification --health --timeout 120
 
-  - name: Build & Push Image
-    uses: docker/build-push-action@v6
-    with:
-      context: ${{ env.BUILD_CONTEXT }}
-      file: ${{ env.DOCKERFILE }}
-      push: true
-      tags: |
-        ${{ env.ACR_REGISTRY }}/chist-${{ matrix.service }}:${{ env.IMAGE_TAG }}
-        ${{ env.ACR_REGISTRY }}/chist-${{ matrix.service }}:latest
+      - name: Sync verification-module
+        if: needs.update-helm-tags.outputs.verification_updated == 'true'
+        run: |
+          argocd app sync chist-verification --force
+          argocd app wait chist-verification --health --timeout 120
 
-  - name: Update deployment
-    run: |
-      DEPLOYMENT_FILE="k8s/${{ matrix.service }}/deployment.yaml"
-
-      sed -i "s|image: .*|image: ${{ env.ACR_REGISTRY }}/chist-${{ matrix.service }}:${{ env.IMAGE_TAG }}|g" "$DEPLOYMENT_FILE"
-
-  - name: Commit & Push
-    run: |
-      git config user.name "github-actions"
-      git config user.email "github-actions@github.com"
-
-      git add k8s/${{ matrix.service }}/deployment.yaml
-
-      git diff --cached --quiet && exit 0
-
-      git commit -m "Update ${{ matrix.service }} image to ${{ env.IMAGE_TAG }}"
-
-      git push
-```
+      - name: Sync frontend
+        if: needs.update-helm-tags.outputs.frontend_updated == 'true'
+        run: |
+          argocd app sync chist-frontend --force
+          argocd app wait chist-frontend --health --timeout 120
