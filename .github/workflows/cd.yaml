@@ -45,16 +45,22 @@ jobs:
     strategy:
       matrix:
         service: [user, report, notification, verification, frontend]
-    if: needs.detect-changes.outputs[matrix.service] == 'true'
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Skip if service not changed
+        if: needs.detect-changes.outputs[matrix.service] != 'true'
+        run: |
+          echo "Service '${{ matrix.service }}' did not change. Skipping."
+          exit 0
 
       - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Fetch ACR secrets from Azure Key Vault
+      - name: Fetch ACR secrets
         run: |
           ACR_REGISTRY=$(az keyvault secret show \
             --vault-name "${{ secrets.AZURE_KEY_VAULT_NAME }}" \
@@ -81,10 +87,8 @@ jobs:
           tags: |
             ${{ env.ACR_REGISTRY }}/chist-${{ matrix.service }}:${{ env.IMAGE_TAG }}
             ${{ env.ACR_REGISTRY }}/chist-${{ matrix.service }}:latest
-          cache-from: type=gha,scope=${{ matrix.service }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
 
-      - name: Commit new image tag for Argo Image Updater
+      - name: Commit new image tag
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
