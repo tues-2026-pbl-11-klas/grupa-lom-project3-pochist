@@ -279,24 +279,29 @@ jobs:
 
       - name: Update user-module tag
         if: needs.build-user.result == 'success'
-        run: sed -i "s/^  tag: .*/  tag: \"${{ steps.sha.outputs.sha_tag }}\"/" helm/user-module-chart/values.yaml
+        run: |
+          sed -i "s/^  tag: .*/  tag: '${{ steps.sha.outputs.sha_tag }}'/" helm/user-module-chart/values.yaml
 
       - name: Update report-module tag
         if: needs.build-report.result == 'success'
-        run: sed -i "s/^  tag: .*/  tag: \"${{ steps.sha.outputs.sha_tag }}\"/" helm/report-module-chart/values.yaml
+        run: |
+          sed -i "s/^  tag: .*/  tag: '${{ steps.sha.outputs.sha_tag }}'/" helm/report-module-chart/values.yaml
 
       - name: Update notification-module tag
         if: needs.build-notification.result == 'success'
-        run: sed -i "s/^  tag: .*/  tag: \"${{ steps.sha.outputs.sha_tag }}\"/" helm/notification-module-chart/values.yaml
+        run: |
+          sed -i "s/^  tag: .*/  tag: '${{ steps.sha.outputs.sha_tag }}'/" helm/notification-module-chart/values.yaml
 
       - name: Update verification-module tag
         if: needs.build-verification.result == 'success'
-        run: sed -i "s/^  tag: .*/  tag: \"${{ steps.sha.outputs.sha_tag }}\"/" helm/verification-module-chart/values.yaml
+        run: |
+          sed -i "s/^  tag: .*/  tag: '${{ steps.sha.outputs.sha_tag }}'/" helm/verification-module-chart/values.yaml
 
       - name: Update frontend tag
         if: needs.build-frontend.result == 'success'
-        run: sed -i "s/^  tag: .*/  tag: \"${{ steps.sha.outputs.sha_tag }}\"/" helm/frontend-chart/values.yaml
-
+        run: |
+          sed -i "s/^  tag: .*/  tag: '${{ steps.sha.outputs.sha_tag }}'/" helm/frontend-chart/values.yaml
+          
       - name: Commit and push updated tags
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
