@@ -28,7 +28,7 @@ spec:
             annotations:
               nginx.ingress.kubernetes.io/ssl-redirect: "false"
             hosts:
-              - http://grafana.20.240.6.13.nip.io
+              - grafana.20.240.6.13.nip.io
         prometheus:
           enabled: true
         alertmanager:
