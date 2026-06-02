@@ -271,11 +271,11 @@ jobs:
       - name: Set update flags
         id: flags
         run: |
-          echo "user=${{ needs.build-user.result == 'success' }}" >> $GITHUB_OUTPUT
-          echo "report=${{ needs.build-report.result == 'success' }}" >> $GITHUB_OUTPUT
-          echo "notification=${{ needs.build-notification.result == 'success' }}" >> $GITHUB_OUTPUT
-          echo "verification=${{ needs.build-verification.result == 'success' }}" >> $GITHUB_OUTPUT
-          echo "frontend=${{ needs.build-frontend.result == 'success' }}" >> $GITHUB_OUTPUT
+          echo "user=${{ needs.build-user.result == 'success' && 'true' || 'false' }}" >> $GITHUB_OUTPUT
+          echo "report=${{ needs.build-report.result == 'success' && 'true' || 'false' }}" >> $GITHUB_OUTPUT
+          echo "notification=${{ needs.build-notification.result == 'success' && 'true' || 'false' }}" >> $GITHUB_OUTPUT
+          echo "verification=${{ needs.build-verification.result == 'success' && 'true' || 'false' }}" >> $GITHUB_OUTPUT
+          echo "frontend=${{ needs.build-frontend.result == 'success' && 'true' || 'false' }}" >> $GITHUB_OUTPUT
 
       - name: Update user-module tag
         if: needs.build-user.result == 'success'
