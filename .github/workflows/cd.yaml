@@ -1,129 +1,145 @@
-name: "CD - Build & Push Images"
+name: CD - Build & Push Images
 
 on:
-  push:
-    branches:
-      - main
+push:
+branches:
+- main
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  detect-changes:
-    name: Detect Changed Services
-    runs-on: ubuntu-latest
-    outputs:
-      user: ${{ steps.changes.outputs.user }}
-      report: ${{ steps.changes.outputs.report }}
-      notification: ${{ steps.changes.outputs.notification }}
-      verification: ${{ steps.changes.outputs.verification }}
-      frontend: ${{ steps.changes.outputs.frontend }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+detect-changes:
+name: Detect Changed Services
+runs-on: ubuntu-latest
 
-      - name: Check for changes
-        id: changes
-        uses: dorny/paths-filter@v3
-        with:
-          filters: |
-            user:
-              - 'backend/user-module/**'
-            report:
-              - 'backend/report-module/**'
-            notification:
-              - 'backend/notification-module/**'
-            verification:
-              - 'backend/verification-module/**'
-            frontend:
-              - 'frontend/**'
+```
+outputs:
+  user: ${{ steps.changes.outputs.user }}
+  report: ${{ steps.changes.outputs.report }}
+  notification: ${{ steps.changes.outputs.notification }}
+  verification: ${{ steps.changes.outputs.verification }}
+  frontend: ${{ steps.changes.outputs.frontend }}
 
-  build-and-push:
-    name: Build & Push
-    runs-on: ubuntu-latest
-    needs: detect-changes
-    strategy:
-      matrix:
-        service:
-          - user
-          - report
-          - notification
-          - verification
-          - frontend
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+steps:
+  - uses: actions/checkout@v4
+    with:
+      fetch-depth: 0
 
-      - name: Skip unchanged service
-        if: needs.detect-changes.outputs[matrix.service] != 'true'
-        run: |
-          echo "${{ matrix.service }} not changed"
-          exit 0
+  - id: changes
+    uses: dorny/paths-filter@v3
+    with:
+      filters: |
+        user:
+          - 'backend/user-module/**'
 
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+        report:
+          - 'backend/report-module/**'
 
-      - name: Fetch ACR info
-        run: |
-          ACR_NAME=$(az keyvault secret show \
-            --vault-name "${{ secrets.AZURE_KEY_VAULT_NAME }}" \
-            --name "acr-name" \
-            --query value -o tsv)
+        notification:
+          - 'backend/notification-module/**'
 
-          ACR_LOGIN_SERVER=$(az acr show \
-            --name "$ACR_NAME" \
-            --query loginServer -o tsv)
+        verification:
+          - 'backend/verification-module/**'
 
-          echo "ACR_NAME=$ACR_NAME" >> $GITHUB_ENV
-          echo "ACR_LOGIN_SERVER=$ACR_LOGIN_SERVER" >> $GITHUB_ENV
+        frontend:
+          - 'frontend/**'
+```
 
-      - name: Login to ACR
-        run: |
-          az acr login --name $ACR_NAME
+build-and-push:
+name: Build & Push
+runs-on: ubuntu-latest
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+```
+needs: detect-changes
 
-      - name: Generate image tag
-        run: |
-          echo "IMAGE_TAG=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+strategy:
+  matrix:
+    service:
+      - user
+      - report
+      - notification
+      - verification
+      - frontend
 
-      - name: Set build paths
-        run: |
-          if [ "${{ matrix.service }}" = "frontend" ]; then
-            echo "BUILD_CONTEXT=frontend" >> $GITHUB_ENV
-            echo "DOCKERFILE=frontend/Dockerfile" >> $GITHUB_ENV
-          else
-            echo "BUILD_CONTEXT=backend/${{ matrix.service }}-module" >> $GITHUB_ENV
-            echo "DOCKERFILE=backend/${{ matrix.service }}-module/Dockerfile" >> $GITHUB_ENV
-          fi
+steps:
+  - uses: actions/checkout@v4
+    with:
+      token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build & Push Image
-        uses: docker/build-push-action@v6
-        with:
-          context: ${{ env.BUILD_CONTEXT }}
-          file: ${{ env.DOCKERFILE }}
-          push: true
-          tags: |
-            ${{ env.ACR_LOGIN_SERVER }}/chist-${{ matrix.service }}:${{ env.IMAGE_TAG }}
-            ${{ env.ACR_LOGIN_SERVER }}/chist-${{ matrix.service }}:latest
+  - name: Skip unchanged service
+    if: needs.detect-changes.outputs[matrix.service] != 'true'
+    run: |
+      echo "${{ matrix.service }} did not change"
+      exit 0
 
-      - name: Update deployment manifest
-        run: |
-          DEPLOYMENT_FILE="k8s/${{ matrix.service }}/deployment.yaml"
-          sed -i "s|image: .*|image: ${{ env.ACR_LOGIN_SERVER }}/chist-${{ matrix.service }}:${{ env.IMAGE_TAG }}|g" "$DEPLOYMENT_FILE"
+  - name: Azure Login
+    uses: azure/login@v2
+    with:
+      creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Commit changes
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add k8s/${{ matrix.service }}/deployment.yaml
-          git diff --cached --quiet && exit 0
-          git commit -m "Update ${{ matrix.service }} image to ${{ env.IMAGE_TAG }}"
-          git push
+  - name: Fetch ACR registry
+    run: |
+      ACR_REGISTRY=$(az keyvault secret show \
+        --vault-name "${{ secrets.AZURE_KEY_VAULT_NAME }}" \
+        --name "acr-registry" \
+        --query value -o tsv)
+
+      echo "ACR_REGISTRY=$ACR_REGISTRY" >> $GITHUB_ENV
+
+  - name: Debug registry
+    run: |
+      echo "Registry: $ACR_REGISTRY"
+
+  - name: Docker Login
+    uses: docker/login-action@v3
+    with:
+      registry: ${{ env.ACR_REGISTRY }}
+      username: ${{ secrets.ACR_USERNAME }}
+      password: ${{ secrets.ACR_PASSWORD }}
+
+  - uses: docker/setup-buildx-action@v3
+
+  - name: Generate image tag
+    run: |
+      echo "IMAGE_TAG=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+  - name: Set paths
+    run: |
+      if [ "${{ matrix.service }}" = "frontend" ]; then
+        echo "BUILD_CONTEXT=frontend" >> $GITHUB_ENV
+        echo "DOCKERFILE=frontend/Dockerfile" >> $GITHUB_ENV
+      else
+        echo "BUILD_CONTEXT=backend/${{ matrix.service }}-module" >> $GITHUB_ENV
+        echo "DOCKERFILE=backend/${{ matrix.service }}-module/Dockerfile" >> $GITHUB_ENV
+      fi
+
+  - name: Build & Push Image
+    uses: docker/build-push-action@v6
+    with:
+      context: ${{ env.BUILD_CONTEXT }}
+      file: ${{ env.DOCKERFILE }}
+      push: true
+      tags: |
+        ${{ env.ACR_REGISTRY }}/chist-${{ matrix.service }}:${{ env.IMAGE_TAG }}
+        ${{ env.ACR_REGISTRY }}/chist-${{ matrix.service }}:latest
+
+  - name: Update deployment
+    run: |
+      DEPLOYMENT_FILE="k8s/${{ matrix.service }}/deployment.yaml"
+
+      sed -i "s|image: .*|image: ${{ env.ACR_REGISTRY }}/chist-${{ matrix.service }}:${{ env.IMAGE_TAG }}|g" "$DEPLOYMENT_FILE"
+
+  - name: Commit & Push
+    run: |
+      git config user.name "github-actions"
+      git config user.email "github-actions@github.com"
+
+      git add k8s/${{ matrix.service }}/deployment.yaml
+
+      git diff --cached --quiet && exit 0
+
+      git commit -m "Update ${{ matrix.service }} image to ${{ env.IMAGE_TAG }}"
+
+      git push
+```
